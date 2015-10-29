@@ -1,10 +1,10 @@
-charmbenchmark.cli package
+charms.benchmark.cli package
 ==========================
 
-charmbenchmark.cli module
+charms.benchmark.cli module
 -------------------------
 
-.. automodule:: charmbenchmark.cli
+.. automodule:: charms.benchmark.cli
     :members:
     :undoc-members:
     :show-inheritance:

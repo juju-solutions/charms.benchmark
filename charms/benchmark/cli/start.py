@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from charmbenchmark import Benchmark
+from charms.benchmark import Benchmark
 
 
 def main():

@@ -4,15 +4,15 @@ API Documentation
 .. toctree::
     :maxdepth: 2
 
-    charmbenchmark
-    charmbenchmark.cli
+    charms.benchmark
+    charms.benchmark.cli
 
-.. automodule:: charmbenchmark
+.. automodule:: charms.benchmark
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: charmbenchmark.cli
+.. automodule:: charms.benchmark.cli
     :members:
     :undoc-members:
     :show-inheritance:

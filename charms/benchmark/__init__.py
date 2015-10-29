@@ -76,8 +76,12 @@ class Benchmark():
 
             if len(config):
                 with open('/etc/benchmark.conf', 'w') as f:
+                    print "Writing config:\n"
                     for key, val in iter(config.items()):
+                        print "%s=%s\n" % (key, val)
                         f.write("%s=%s\n" % (key, val))
+            else:
+                print "No config to write\n"
 
     @staticmethod
     def set_data(value):

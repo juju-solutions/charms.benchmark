@@ -1,18 +1,18 @@
 Getting Started
 ===============
 
-Benchmarks are `Juju Actions <https://jujucharms.com/docs/stable/actions>`_ that follow a specific pattern. While they can be accomplished via ``action_set``, we've created charm-benchmark to make that task easier.
+Benchmarks are `Juju Actions <https://jujucharms.com/docs/stable/actions>`_ that follow a specific pattern. While they can be accomplished via ``action_set``, we've created charms.benchmark to make that task easier.
 
-Installing Charm Benchmark
+Installing charms.benchmark
 --------------------------
 
-    pip install charm-benchmark
+    pip install charms.benchmark
 
 
 Using charm-benchmark
 ---------------------
 
-There are two ways of using charm-benchmark: via direct calls to the Python library...:
+There are two ways of using charms.benchmark: via direct calls to the Python library...:
 
 ::
 
@@ -20,11 +20,11 @@ There are two ways of using charm-benchmark: via direct calls to the Python libr
     import subprocess
 
     try:
-        from charmhelpers.contrib.benchmark import Benchmark
+        from charms.benchmark import Benchmark
     except ImportError:
         subprocess.check_call(['apt-get', 'install', '-y', 'python-pip'])
-        subprocess.check_call(['pip', 'install', 'charm-benchmark'])
-        from charmbenchmark import Benchmark
+        subprocess.check_call(['pip', 'install', 'charms.benchmark'])
+        from charms.benchmark import Benchmark
 
 
     def main():
@@ -71,10 +71,10 @@ There are two ways of using charm-benchmark: via direct calls to the Python libr
     #!/bin/bash
     set -eux
 
-    # Make sure charm-benchmark is installed
+    # Make sure charms.benchmark is installed
     if ! hash benchmark-start 2>/dev/null; then
         apt-get install -y python-pip
-        pip install -U charm-benchmark
+        pip install -U charms.benchmark
     fi
     benchmark-start
 

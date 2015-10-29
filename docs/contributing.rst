@@ -6,7 +6,7 @@ All contributions, both code and documentation, are welcome!
 Source
 ------
 
-The source code is located at https://github.com/juju-solutions/charm-benchmark. To
+The source code is located at https://github.com/juju-solutions/charms.benchmark. To
 submit contributions you'll need to create a Github account if you do not
 already have one.
 
@@ -19,7 +19,7 @@ Open Bugs
 ---------
 
 If you're looking for something to work on, the open bug/feature list can be
-found at https://github.com/juju-solutions/charm-benchmark/issues.
+found at https://github.com/juju-solutions/charms.benchmark/issues.
 
 Documentation
 -------------
@@ -29,7 +29,7 @@ document in the root of the source tree for instructions on building the documen
 
 Contributions to the :doc:`example-index` section of the documentation are
 especially welcome, and are easy to add. Simply add a new ``.rst`` file under
-``charmbenchmark/docs/examples``.
+``charms.benchmark/docs/examples``.
 
 Getting Help
 ------------

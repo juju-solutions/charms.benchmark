@@ -3,7 +3,7 @@ import unittest
 from testtools import TestCase
 
 import mock
-from charmbenchmark import Benchmark
+from charms.benchmark import Benchmark
 from helpers import patch_open, FakeRelation
 
 
@@ -39,22 +39,23 @@ class TestBenchmark(TestCase):
         self.relation_ids.side_effect = self.fake_relation.relation_ids
 
     def _patch(self, method):
-        _m = mock.patch('charmbenchmark.' + method)
+        print "Mocking " + 'charms.benchmark.' + method
+        _m = mock.patch('charms.benchmark.' + method)
         m = _m.start()
         self.addCleanup(_m.stop)
         return m
 
-    @mock.patch('charmbenchmark.action_set')
+    @mock.patch('charms.benchmark.action_set')
     def test_set_data(self, action_set):
         action_set.return_value = True
         data = {'key': 'value'}
         self.assertTrue(Benchmark.set_data(data))
         action_set.assert_called_once_with(data)
 
-    @mock.patch('charmbenchmark.relation_get')
-    @mock.patch('charmbenchmark.relation_set')
-    @mock.patch('charmbenchmark.relation_ids')
-    @mock.patch('charmbenchmark.in_relation_hook')
+    @mock.patch('charms.benchmark.relation_get')
+    @mock.patch('charms.benchmark.relation_set')
+    @mock.patch('charms.benchmark.relation_ids')
+    @mock.patch('charms.benchmark.in_relation_hook')
     def test_benchmark_init(self, in_relation_hook, relation_ids, relation_set, relation_get):
 
         in_relation_hook.return_value = True
@@ -82,22 +83,23 @@ class TestBenchmark(TestCase):
             # Test benchmark.conf
             _open.assert_called_with('/etc/benchmark.conf', 'w')
             for key, val in iter(FAKE_RELATION['benchmark:0']['benchmark/0'].items()):
+                print "Expecting call " + "%s=%s\n" % (key, val)
                 _file.write.assert_any_called("%s=%s\n" % (key, val))
 
             relation_get.return_value = None
             Benchmark(actions)
 
-    @mock.patch('charmbenchmark.action_set')
+    @mock.patch('charms.benchmark.action_set')
     def test_benchmark_start_oserror(self, action_set):
         action_set.side_effect = OSError('File not found')
         self.assertFalse(Benchmark.start())
 
-    @mock.patch('charmbenchmark.action_set')
+    @mock.patch('charms.benchmark.action_set')
     def test_benchmark_finish_oserror(self, action_set):
         action_set.side_effect = OSError('File not found')
         self.assertFalse(Benchmark.finish())
 
-    @mock.patch('charmbenchmark.action_set')
+    @mock.patch('charms.benchmark.action_set')
     @mock.patch('os.path.exists')
     @mock.patch('subprocess.check_output')
     def test_benchmark_start(self, check_output, exists, action_set):
@@ -112,18 +114,18 @@ class TestBenchmark(TestCase):
         exists.assert_any_call(COLLECT_PROFILE_DATA)
         check_output.assert_any_call([COLLECT_PROFILE_DATA])
 
-    @mock.patch('charmbenchmark.action_set')
+    @mock.patch('charms.benchmark.action_set')
     def test_benchmark_finish(self, action_set):
         action_set.return_value = True
         self.assertTrue(Benchmark.finish())
 
-    @mock.patch('charmbenchmark.Benchmark.set_data')
+    @mock.patch('charms.benchmark.Benchmark.set_data')
     def test_benchmark_set_composite_score(self, set_data):
         set_data.return_value = True
         self.assertTrue(Benchmark.set_composite_score(15.7, 'hits/sec', 'desc'))
 
-    @mock.patch('charmbenchmark.Benchmark.set_data')
-    @mock.patch('charmbenchmark.Benchmark.set_meta')
+    @mock.patch('charms.benchmark.Benchmark.set_data')
+    @mock.patch('charms.benchmark.Benchmark.set_meta')
     def test_benchmark_meta(self, set_meta, set_data):
         key = 'foo'
         value = 'bar'
