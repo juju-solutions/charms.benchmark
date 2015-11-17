@@ -2,7 +2,6 @@ import subprocess
 import os
 import time
 from charmhelpers.core.hookenv import (
-    action_get,
     action_set,
     in_relation_hook,
     relation_get,
@@ -22,7 +21,8 @@ class Benchmark():
 
     Examples:
 
-    Notify the Benchmark GUI of the actions that are benchmark-enabled, usually run from benchmark-relation-[joined|changed]::
+    Notify the Benchmark GUI of the actions that are benchmark-enabled,
+    usually run from benchmark-relation-[joined|changed]::
 
         Benchmark(['memory', 'cpu', 'disk', 'smoke', 'custom'])
 
@@ -37,7 +37,8 @@ class Benchmark():
         Benchmark.set_data({'results.transactions.value': 1096})
         Benchmark.set_data({'results.transactions.units': 'hits'})
 
-        # Store a meta key, available via ``juju action fetch`` but not shown in the Benchmark GUI
+        # Store a meta key, available via ``juju action fetch`` but not shown
+        # in the Benchmark GUI
         Benchmark.set_meta('myuuid', '1b231f32-16c3-11e5-ac89-14109fd63717')
 
         # The higher the score, the better the benchmark
@@ -56,6 +57,7 @@ class Benchmark():
     ]
 
     def __init__(self, benchmarks=None):
+        print "__init__ called.\n"
         if in_relation_hook():
             if benchmarks is not None:
                 for rid in sorted(relation_ids('benchmark')):
@@ -76,9 +78,8 @@ class Benchmark():
 
             if len(config):
                 with open('/etc/benchmark.conf', 'w') as f:
-                    print "Writing config:\n"
-                    for key, val in iter(config.items()):
-                        print "%s=%s\n" % (key, val)
+                    for key, val in config.items():
+                        print "kv: %s=%s\n" % (key, val)
                         f.write("%s=%s\n" % (key, val))
             else:
                 print "No config to write\n"
@@ -122,8 +123,18 @@ class Benchmark():
         If the cabs-collector charm is installed, take a snapshot
         of the current profile data.
         """
+        # Do profile data collection immediately on this unit
         if os.path.exists(COLLECT_PROFILE_DATA):
             subprocess.check_output([COLLECT_PROFILE_DATA])
+
+        # Tell collector charm the action_id via the benchmark relation.
+        # The collector will pass the action_id to its peers,
+        # triggering profile data collection on all collectors in the
+        # environment.
+        for rid in relation_ids('benchmark'):
+            relation_set(relation_id=rid, relation_settings={
+                'action_id': os.environ.get('JUJU_ACTION_ID')
+            })
 
         return Benchmark.set_data({
             'meta.start': time.strftime('%Y-%m-%dT%H:%M:%SZ')
