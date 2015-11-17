@@ -57,7 +57,6 @@ class Benchmark():
     ]
 
     def __init__(self, benchmarks=None):
-        print "__init__ called.\n"
         if in_relation_hook():
             if benchmarks is not None:
                 for rid in sorted(relation_ids('benchmark')):
@@ -79,10 +78,7 @@ class Benchmark():
             if len(config):
                 with open('/etc/benchmark.conf', 'w') as f:
                     for key, val in config.items():
-                        print "kv: %s=%s\n" % (key, val)
                         f.write("%s=%s\n" % (key, val))
-            else:
-                print "No config to write\n"
 
     @staticmethod
     def set_data(value):
