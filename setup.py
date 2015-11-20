@@ -14,7 +14,9 @@ tests_require = [
 
 setup(
     name='charms.benchmark',
-    version='1.0',
+    version='0.9.1',
+    author='Adam Israel',
+    author_email='adam@adamisrael.com',
     description='Library to aid in the creation of benchmark actions in Juju',
     install_requires=install_requires,
     url="https://github.com/juju-solutions/charms.benchmark",
