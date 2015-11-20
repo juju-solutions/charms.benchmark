@@ -1,6 +1,7 @@
 import subprocess
 import os
 import time
+import yaml
 from charmhelpers.core.hookenv import (
     action_set,
     in_relation_hook,
@@ -123,14 +124,21 @@ class Benchmark():
         if os.path.exists(COLLECT_PROFILE_DATA):
             subprocess.check_output([COLLECT_PROFILE_DATA])
 
-        # Tell collector charm the action_id via the benchmark relation.
-        # The collector will pass the action_id to its peers,
-        # triggering profile data collection on all collectors in the
-        # environment.
-        for rid in relation_ids('benchmark'):
-            relation_set(relation_id=rid, relation_settings={
-                'action_id': os.environ.get('JUJU_ACTION_ID')
-            })
+        # Tell the benchmark-gui charm the action_id via the benchmark
+        # relation. Benchmark-gui will pass the action_id to all
+        # collector charms in the environment (via the collector relation),
+        # triggering profile data collection on each.
+        if os.environ['CHARM_DIR']:
+            f = open(os.environ['CHARM_DIR'] + '/metadata.yaml', 'r')
+            metadata = yaml.load(f)
+            f.close()
+
+            for relation in metadata['provides']:
+                if metadata['provides'][relation]['interface'] == 'benchmark':
+                    for rid in relation_ids(relation):
+                        relation_set(relation_id=rid, relation_settings={
+                            'action_id': os.environ.get('JUJU_ACTION_UUID')
+                        })
 
         return Benchmark.set_data({
             'meta.start': time.strftime('%Y-%m-%dT%H:%M:%SZ')
