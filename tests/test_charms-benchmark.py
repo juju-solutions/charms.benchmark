@@ -3,7 +3,7 @@ from testtools import TestCase
 import mock
 from charms.benchmark import Benchmark
 from helpers import patch_open, FakeRelation
-
+import yaml
 
 TO_PATCH = [
     'in_relation_hook',
@@ -23,6 +23,21 @@ FAKE_RELATION = {
         }
     }
 }
+
+METADATAYAML = """
+name: my-charm
+summary: Summary
+maintainer: Adam Israel <adam.israel@canonical.com>
+description: Longer description
+tags:
+  - misc
+subordinate: false
+provides:
+  blahdeblah:
+    interface: benchmark
+"""
+METADATA = yaml.safe_load(METADATAYAML)
+
 
 
 class TestBenchmark(TestCase):
@@ -82,32 +97,47 @@ class TestBenchmark(TestCase):
             for key, val in relation_data.items():
                 _file.write.assert_any_call("%s=%s\n" % (key, val))
 
+    @mock.patch.dict('os.environ', {
+        'JUJU_ACTION_ID': 'my_action',
+        'JUJU_RELATION': 'benchmark',
+        'CHARM_DIR': '/my_dir'})
     @mock.patch('charms.benchmark.action_set')
     def test_benchmark_start_oserror(self, action_set):
         action_set.side_effect = OSError('File not found')
-        self.assertFalse(Benchmark.start())
+
+        with patch_open() as (_open, _file):
+            self.assertFalse(Benchmark.start())
 
     @mock.patch('charms.benchmark.action_set')
     def test_benchmark_finish_oserror(self, action_set):
         action_set.side_effect = OSError('File not found')
         self.assertFalse(Benchmark.finish())
 
-    @mock.patch.dict('charms.benchmark.os.environ', {
-        'JUJU_ACTION_ID': 'my_action'})
+    @mock.patch.dict('os.environ', {
+        'JUJU_ACTION_UUID': 'my_action',
+        'JUJU_RELATION': 'benchmark',
+        'CHARM_DIR': '/my_dir'}, clear=True)
+    @mock.patch('yaml.safe_load')
+    @mock.patch('charms.benchmark.in_relation_hook')
     @mock.patch('charms.benchmark.relation_set')
     @mock.patch('charms.benchmark.relation_ids')
     @mock.patch('charms.benchmark.action_set')
     @mock.patch('os.path.exists')
     @mock.patch('subprocess.check_output')
     def test_benchmark_start(self, check_output, exists, action_set,
-                             relation_ids, relation_set):
+                             relation_ids, relation_set, in_relation_hook,
+                             safe_load):
 
         exists.return_value = True
         check_output.return_value = "data"
         action_set.return_value = True
         relation_ids.return_value = ['benchmark:1']
+        in_relation_hook.return_value = True
+        safe_load.side_effect = [METADATA]
 
-        self.assertTrue(Benchmark.start())
+        with patch_open() as (_open, _file):
+            self.assertTrue(Benchmark.start())
+            _open.assert_called_with('/my_dir/metadata.yaml', 'r')
 
         relation_set.assert_called_once_with(
             relation_id='benchmark:1',
