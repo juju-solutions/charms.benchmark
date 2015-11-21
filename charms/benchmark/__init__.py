@@ -145,7 +145,7 @@ class Benchmark():
                     ), 'r') as f:
                 metadata = yaml.safe_load(f.read())
 
-            for relation in metadata['provides']:
+            for relation in metadata.get('provides', {}):
                 if metadata['provides'][relation]['interface'] == 'benchmark':
                     for rid in relation_ids(relation):
                         relation_set(relation_id=rid, relation_settings={
