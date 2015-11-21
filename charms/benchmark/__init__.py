@@ -1,5 +1,7 @@
 import subprocess
 import os
+from os.path import basename
+import sys
 import time
 import yaml
 from charmhelpers.core.hookenv import (
@@ -80,6 +82,11 @@ class Benchmark():
                 with open('/etc/benchmark.conf', 'w') as f:
                     for key, val in config.items():
                         f.write("%s=%s\n" % (key, val))
+        else:
+            raise Exception(
+                '%s can only be executed from within a hook context.'
+                % basename(sys.argv[0])
+            )
 
     @staticmethod
     def set_data(value):
@@ -116,28 +123,33 @@ class Benchmark():
 
     @staticmethod
     def start():
-        """
-        If the cabs-collector charm is installed, take a snapshot
-        of the current profile data.
-        """
-        # Do profile data collection immediately on this unit
-        if os.path.exists(COLLECT_PROFILE_DATA):
-            subprocess.check_output([COLLECT_PROFILE_DATA])
-
         # Tell the benchmark-gui charm the action_id via the benchmark
         # relation. Benchmark-gui will pass the action_id to all
         # collector charms in the environment (via the collector relation),
         # triggering profile data collection on each.
-        if os.environ['CHARM_DIR']:
-            f = open(os.environ['CHARM_DIR'] + '/metadata.yaml', 'r')
-            metadata = yaml.load(f)
-            f.close()
+        charm_dir = os.environ.get('CHARM_DIR')
+        action_uuid = os.environ.get('JUJU_ACTION_UUID')
+
+        if in_relation_hook() and charm_dir and action_uuid:
+            """
+            If the cabs-collector charm is installed, take a snapshot
+            of the current profile data.
+            """
+            # Do profile data collection immediately on this unit
+            if os.path.exists(COLLECT_PROFILE_DATA):
+                subprocess.check_output([COLLECT_PROFILE_DATA])
+
+            with open(
+                os.path.join(
+                    charm_dir, 'metadata.yaml'
+                    ), 'r') as f:
+                metadata = yaml.safe_load(f.read())
 
             for relation in metadata['provides']:
                 if metadata['provides'][relation]['interface'] == 'benchmark':
                     for rid in relation_ids(relation):
                         relation_set(relation_id=rid, relation_settings={
-                            'action_id': os.environ.get('JUJU_ACTION_UUID')
+                            'action_id': action_uuid
                         })
 
         return Benchmark.set_data({
