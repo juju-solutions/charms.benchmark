@@ -3,14 +3,14 @@ Getting Started
 
 Benchmarks are `Juju Actions <https://jujucharms.com/docs/stable/actions>`_ that follow a specific pattern. While they can be accomplished via ``action_set``, we've created charms.benchmark to make that task easier.
 
-Installing charms.benchmark
+Installing Charm Benchmark
 --------------------------
 
     pip install charms.benchmark
 
 
-Using charm-benchmark
----------------------
+Using charms.benchmark
+----------------------
 
 There are two ways of using charms.benchmark: via direct calls to the Python library...:
 

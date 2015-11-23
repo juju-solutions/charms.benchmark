@@ -13,7 +13,7 @@ already have one.
 Submitting a Pull Request
 ---------------------------
 
-`Fork <https://help.github.com/articles/fork-a-repo/>`_  the charm-benchmark repo to your personal space and make your changes. When you're ready, and ``make test`` both covers the new features added and passes on them cleanly, you can send a `pull request <https://help.github.com/articles/using-pull-requests/>`_.
+`Fork <https://help.github.com/articles/fork-a-repo/>`_  the charms.benchmark repo to your personal space and make your changes. When you're ready, and ``make test`` both covers the new features added and passes on them cleanly, you can send a `pull request <https://help.github.com/articles/using-pull-requests/>`_.
 
 Open Bugs
 ---------
@@ -26,10 +26,6 @@ Documentation
 
 If you'd like to contribute to the documentation, please refer to the ``HACKING``
 document in the root of the source tree for instructions on building the documentation.
-
-Contributions to the :doc:`example-index` section of the documentation are
-especially welcome, and are easy to add. Simply add a new ``.rst`` file under
-``charms.benchmark/docs/examples``.
 
 Getting Help
 ------------
