@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+import os.path
 
 install_requires = [
     'PyYAML',
@@ -11,10 +12,13 @@ tests_require = [
     'pep8',
 ]
 
+HERE = os.path.dirname(__file__)
+with open(os.path.join(HERE, 'VERSION')) as f:
+    VERSION = f.read().strip()
 
 setup(
     name='charms.benchmark',
-    version='0.9.1',
+    version=VERSION,
     author='Adam Israel',
     author_email='adam@adamisrael.com',
     description='Library to aid in the creation of benchmark actions in Juju',
