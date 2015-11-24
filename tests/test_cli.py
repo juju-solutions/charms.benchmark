@@ -3,7 +3,7 @@ import unittest
 from testtools import TestCase
 
 import mock
-from charmbenchmark import Benchmark
+from charms.benchmark import Benchmark
 from helpers import patch_open, FakeRelation
 
 
@@ -30,7 +30,7 @@ FAKE_RELATION = {
 class TestBenchmarkCli(TestCase):
 
     def setUp(self):
-        super(TestBenchmark, self).setUp()
+        super(TestBenchmarkCli, self).setUp()
         for m in TO_PATCH:
             setattr(self, m, self._patch(m))
         self.fake_relation = FakeRelation(FAKE_RELATION)
@@ -39,8 +39,7 @@ class TestBenchmarkCli(TestCase):
         self.relation_ids.side_effect = self.fake_relation.relation_ids
 
     def _patch(self, method):
-        _m = mock.patch('charmbenchmark.' + method)
+        _m = mock.patch('charms.benchmark.' + method)
         m = _m.start()
         self.addCleanup(_m.stop)
         return m
-        

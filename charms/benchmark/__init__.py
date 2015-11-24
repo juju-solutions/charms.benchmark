@@ -1,8 +1,10 @@
 import subprocess
 import os
+from os.path import basename
+import sys
 import time
+import yaml
 from charmhelpers.core.hookenv import (
-    action_get,
     action_set,
     in_relation_hook,
     relation_get,
@@ -22,7 +24,8 @@ class Benchmark():
 
     Examples:
 
-    Notify the Benchmark GUI of the actions that are benchmark-enabled, usually run from benchmark-relation-[joined|changed]::
+    Notify the Benchmark GUI of the actions that are benchmark-enabled,
+    usually run from benchmark-relation-[joined|changed]::
 
         Benchmark(['memory', 'cpu', 'disk', 'smoke', 'custom'])
 
@@ -37,7 +40,8 @@ class Benchmark():
         Benchmark.set_data({'results.transactions.value': 1096})
         Benchmark.set_data({'results.transactions.units': 'hits'})
 
-        # Store a meta key, available via ``juju action fetch`` but not shown in the Benchmark GUI
+        # Store a meta key, available via ``juju action fetch`` but not shown
+        # in the Benchmark GUI
         Benchmark.set_meta('myuuid', '1b231f32-16c3-11e5-ac89-14109fd63717')
 
         # The higher the score, the better the benchmark
@@ -76,8 +80,13 @@ class Benchmark():
 
             if len(config):
                 with open('/etc/benchmark.conf', 'w') as f:
-                    for key, val in iter(config.items()):
+                    for key, val in config.items():
                         f.write("%s=%s\n" % (key, val))
+        else:
+            raise Exception(
+                '%s can only be executed from within a hook context.'
+                % basename(sys.argv[0])
+            )
 
     @staticmethod
     def set_data(value):
@@ -114,12 +123,34 @@ class Benchmark():
 
     @staticmethod
     def start():
-        """
-        If the cabs-collector charm is installed, take a snapshot
-        of the current profile data.
-        """
-        if os.path.exists(COLLECT_PROFILE_DATA):
-            subprocess.check_output([COLLECT_PROFILE_DATA])
+        # Tell the benchmark-gui charm the action_id via the benchmark
+        # relation. Benchmark-gui will pass the action_id to all
+        # collector charms in the environment (via the collector relation),
+        # triggering profile data collection on each.
+        charm_dir = os.environ.get('CHARM_DIR')
+        action_uuid = os.environ.get('JUJU_ACTION_UUID')
+
+        if in_relation_hook() and charm_dir and action_uuid:
+            """
+            If the cabs-collector charm is installed, take a snapshot
+            of the current profile data.
+            """
+            # Do profile data collection immediately on this unit
+            if os.path.exists(COLLECT_PROFILE_DATA):
+                subprocess.check_output([COLLECT_PROFILE_DATA])
+
+            with open(
+                os.path.join(
+                    charm_dir, 'metadata.yaml'
+                    ), 'r') as f:
+                metadata = yaml.safe_load(f.read())
+
+            for relation in metadata.get('provides', {}):
+                if metadata['provides'][relation]['interface'] == 'benchmark':
+                    for rid in relation_ids(relation):
+                        relation_set(relation_id=rid, relation_settings={
+                            'action_id': action_uuid
+                        })
 
         return Benchmark.set_data({
             'meta.start': time.strftime('%Y-%m-%dT%H:%M:%SZ')

@@ -12,7 +12,7 @@ else
   NOSE = venv/bin/nosetests
 endif
 
-PROJECT=charmbenchmark
+PROJECT=charms.benchmark
 
 # ###########
 # Build

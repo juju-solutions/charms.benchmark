@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import argparse
-from charmbenchmark import Benchmark
+from charms.benchmark import Benchmark
 
 
 def main():
