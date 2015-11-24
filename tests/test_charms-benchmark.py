@@ -2,7 +2,7 @@ from testtools import TestCase
 
 import mock
 from charms.benchmark import Benchmark
-from helpers import patch_open, FakeRelation
+from tests.helpers import patch_open, FakeRelation
 import yaml
 
 TO_PATCH = [
