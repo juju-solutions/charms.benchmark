@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/juju-solutions/charms.benchmark.svg?branch=master)](https://travis-ci.org/juju-solutions/charms.benchmark)
-[![Coverage Status](https://coveralls.io/repos/juju-solutions/charms.benchmark/badge.svg)](https://coveralls.io/r/juju-solutions/charms.benchmark)
+[![Coverage Status](https://coveralls.io/repos/juju-solutions/charms.benchmark/badge.svg?branch=master&service=github)](https://coveralls.io/github/juju-solutions/charms.benchmark?branch=master)
 
 # charms.benchmark
 
