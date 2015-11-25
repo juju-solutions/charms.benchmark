@@ -15,7 +15,7 @@ from charmhelpers.core.hookenv import (
 COLLECT_PROFILE_DATA = '/usr/local/bin/collect-profile-data'
 
 
-class Benchmark():
+class Benchmark(object):
     """
     Helper class for the `benchmark` interface.
 
