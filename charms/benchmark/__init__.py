@@ -60,7 +60,12 @@ class Benchmark(object):
     ]
 
     def __init__(self, benchmarks=None):
-        if 'JUJU_ACTION_UUID' in os.environ or in_relation_hook():
+        if in_relation_hook():
+            """
+            When we're inside a hook relation (not an action context), we want
+            to notify whatever's listening on the other end of the wire, i.e.,
+            the benchmark-gui, of what benchmark's we're advertising.
+            """
             if benchmarks is not None:
                 for rid in sorted(relation_ids('benchmark')):
                     relation_set(relation_id=rid, relation_settings={
@@ -82,11 +87,6 @@ class Benchmark(object):
                 with open('/etc/benchmark.conf', 'w') as f:
                     for key, val in config.items():
                         f.write("%s=%s\n" % (key, val))
-        else:
-            raise Exception(
-                '%s can only be executed from within a hook context.'
-                % basename(sys.argv[0])
-            )
 
     @staticmethod
     def set_data(value):
