@@ -60,7 +60,7 @@ class Benchmark(object):
     ]
 
     def __init__(self, benchmarks=None):
-        if in_relation_hook():
+        if 'JUJU_ACTION_UUID' in os.environ or in_relation_hook():
             if benchmarks is not None:
                 for rid in sorted(relation_ids('benchmark')):
                     relation_set(relation_id=rid, relation_settings={
