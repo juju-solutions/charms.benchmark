@@ -146,7 +146,7 @@ class TestBenchmark(TestCase):
 
         COLLECT_PROFILE_DATA = '/usr/local/bin/collect-profile-data'
         exists.assert_any_call(COLLECT_PROFILE_DATA)
-        check_output.assert_any_call([COLLECT_PROFILE_DATA])
+        check_output.assert_any_call([COLLECT_PROFILE_DATA, 'my_action'])
 
     @mock.patch('charms.benchmark.action_set')
     def test_benchmark_finish(self, action_set):

@@ -130,14 +130,14 @@ class Benchmark(object):
         charm_dir = os.environ.get('CHARM_DIR')
         action_uuid = os.environ.get('JUJU_ACTION_UUID')
 
-        if in_relation_hook() and charm_dir and action_uuid:
+        if charm_dir and action_uuid:
             """
             If the cabs-collector charm is installed, take a snapshot
             of the current profile data.
             """
             # Do profile data collection immediately on this unit
             if os.path.exists(COLLECT_PROFILE_DATA):
-                subprocess.check_output([COLLECT_PROFILE_DATA])
+                subprocess.check_output([COLLECT_PROFILE_DATA, action_uuid])
 
             with open(
                 os.path.join(
